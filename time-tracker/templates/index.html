@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Dashboard – Duty Clock{% endblock %}
+
+{% block content %}
+
+<!-- =====================================================================
+     Active timer banner
+     ===================================================================== -->
+{% if active_entry %}
+<section class="card card--active">
+  <h2>▶ Currently tracking</h2>
+  <p class="active-duty">{{ active_entry.duty_name }}</p>
+  <p class="active-started">Started at {{ active_entry.started_at[11:16] }}</p>
+  <form method="post" action="{{ url_for('stop_timer') }}">
+    <button type="submit" class="btn btn--danger">⏹ Stop</button>
+  </form>
+</section>
+{% else %}
+<section class="card card--idle">
+  <h2>No active timer</h2>
+  <p>Pick a duty below to start tracking.</p>
+</section>
+{% endif %}
+
+<!-- =====================================================================
+     Today's summary
+     ===================================================================== -->
+<section class="card">
+  <h2>Today's summary</h2>
+  {% if duty_totals %}
+  <p class="total-time">Total tracked: <strong>{{ total_duration }}</strong></p>
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th>Duty</th>
+        <th>Time</th>
+        <th>Share</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in duty_totals %}
+      <tr>
+        <td>{{ row.duty_name }}</td>
+        <td>{{ row.duration }}</td>
+        <td>
+          <div class="progress-bar">
+            <div class="progress-bar__fill" style="width: {{ row.percentage }}%"></div>
+          </div>
+          {{ row.percentage }}%
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No time tracked today yet.</p>
+  {% endif %}
+</section>
+
+<!-- =====================================================================
+     Duties list
+     ===================================================================== -->
+<section class="card">
+  <h2>Duties</h2>
+
+  <!-- Create duty form -->
+  <form method="post" action="{{ url_for('create_duty') }}" class="inline-form">
+    <input type="text" name="name" placeholder="New duty name…" required class="text-input" />
+    <button type="submit" class="btn btn--primary">+ Add</button>
+  </form>
+
+  {% if duties %}
+  <ul class="duty-list">
+    {% for duty in duties %}
+    <li class="duty-item {% if not duty.active %}duty-item--inactive{% endif %}">
+      <span class="duty-name">{{ duty.name }}</span>
+      <span class="duty-actions">
+        {% if duty.active %}
+          <form method="post" action="{{ url_for('start_timer', duty_id=duty.id) }}" style="display:inline">
+            <button type="submit"
+                    class="btn btn--start {% if active_entry and active_entry.duty_id == duty.id %}btn--start-active{% endif %}">
+              {% if active_entry and active_entry.duty_id == duty.id %}▶ Active{% else %}▶ Start{% endif %}
+            </button>
+          </form>
+          <form method="post" action="{{ url_for('deactivate_duty', duty_id=duty.id) }}" style="display:inline">
+            <button type="submit" class="btn btn--small btn--muted">Deactivate</button>
+          </form>
+        {% else %}
+          <form method="post" action="{{ url_for('activate_duty', duty_id=duty.id) }}" style="display:inline">
+            <button type="submit" class="btn btn--small btn--muted">Activate</button>
+          </form>
+        {% endif %}
+        <form method="post" action="{{ url_for('delete_duty', duty_id=duty.id) }}" style="display:inline"
+              onsubmit="return confirm('Delete this duty and ALL its time entries?');">
+          <button type="submit" class="btn btn--small btn--danger">Delete</button>
+        </form>
+      </span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">No duties yet. Add one above.</p>
+  {% endif %}
+</section>
+
+<!-- =====================================================================
+     Today's entries (quick view)
+     ===================================================================== -->
+{% if today_entries %}
+<section class="card">
+  <h2>Today's entries</h2>
+  <table class="entry-table">
+    <thead>
+      <tr>
+        <th>Duty</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Duration</th>
+        <th>Notes</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in today_entries %}
+      <tr {% if not e.ended_at %}class="row--active"{% endif %}>
+        <td>{{ e.duty_name }}</td>
+        <td>{{ e.started_at[11:16] }}</td>
+        <td>{{ e.ended_at[11:16] if e.ended_at else '—' }}</td>
+        <td>{{ format_duration(entry_duration_seconds(e)) }}</td>
+        <td class="notes-cell">{{ e.notes or '' }}</td>
+        <td>
+          <a href="{{ url_for('edit_entry', entry_id=e.id) }}" class="btn btn--small">Edit</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endif %}
+
+{% endblock %}

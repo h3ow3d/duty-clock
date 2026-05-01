@@ -1,0 +1,314 @@
+/* ============================================================
+   Duty Clock – custom CSS
+   Mobile-first, no external libraries.
+   ============================================================ */
+
+/* ---- Reset & base ---------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --color-bg:        #f5f7fa;
+  --color-surface:   #ffffff;
+  --color-border:    #dde1e7;
+  --color-text:      #1e2330;
+  --color-muted:     #6b7280;
+  --color-primary:   #2563eb;
+  --color-primary-h: #1d4ed8;
+  --color-success:   #16a34a;
+  --color-danger:    #dc2626;
+  --color-danger-h:  #b91c1c;
+  --color-active-bg: #eff6ff;
+  --color-active-bd: #2563eb;
+  --radius:          0.5rem;
+  --shadow:          0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 1rem;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a { color: var(--color-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---- Site header ----------------------------------------- */
+.site-header {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.site-header nav {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.site-header nav a {
+  color: var(--color-muted);
+  font-size: 0.95rem;
+}
+
+.site-header nav a:hover,
+.site-header nav a.active {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* ---- Main container -------------------------------------- */
+.container {
+  max-width: 860px;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  flex: 1;
+}
+
+/* ---- Cards ----------------------------------------------- */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.card h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--color-text);
+}
+
+.card--active {
+  border-color: var(--color-active-bd);
+  background: var(--color-active-bg);
+}
+
+.card--idle {
+  border-color: var(--color-border);
+}
+
+/* ---- Flash messages -------------------------------------- */
+.flash-list { list-style: none; margin-bottom: 1rem; }
+
+.flash {
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.flash--success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.flash--error   { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+/* ---- Active duty display --------------------------------- */
+.active-duty    { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; }
+.active-started { color: var(--color-muted); margin-bottom: 0.75rem; }
+
+/* ---- Buttons --------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.45rem 0.9rem;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s;
+  line-height: 1.4;
+}
+
+.btn--primary  { background: var(--color-primary); color: #fff; }
+.btn--primary:hover { background: var(--color-primary-h); text-decoration: none; color: #fff; }
+
+.btn--danger   { background: var(--color-danger); color: #fff; }
+.btn--danger:hover  { background: var(--color-danger-h); text-decoration: none; color: #fff; }
+
+.btn--muted    { background: var(--color-border); color: var(--color-text); }
+.btn--muted:hover   { background: #c9cdd4; text-decoration: none; }
+
+.btn--start    { background: #16a34a; color: #fff; }
+.btn--start:hover   { background: #15803d; text-decoration: none; color: #fff; }
+
+.btn--start-active { background: var(--color-primary); }
+.btn--start-active:hover { background: var(--color-primary-h); }
+
+.btn--small    { padding: 0.25rem 0.6rem; font-size: 0.8rem; }
+
+/* ---- Inline form (add duty) ------------------------------ */
+.inline-form {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.text-input {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: var(--color-bg);
+  color: var(--color-text);
+  flex: 1 1 200px;
+}
+
+.text-input:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.select-input {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: var(--color-bg);
+  color: var(--color-text);
+  width: 100%;
+}
+
+.textarea { resize: vertical; width: 100%; }
+
+/* ---- Duty list ------------------------------------------- */
+.duty-list { list-style: none; }
+
+.duty-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--color-border);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.duty-item:last-child { border-bottom: none; }
+
+.duty-item--inactive .duty-name {
+  color: var(--color-muted);
+  text-decoration: line-through;
+}
+
+.duty-name { font-weight: 500; }
+
+.duty-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+/* ---- Tables --------------------------------------------- */
+.entry-table,
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.entry-table th,
+.entry-table td,
+.summary-table th,
+.summary-table td {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.entry-table th,
+.summary-table th {
+  font-weight: 600;
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.row--active { background: var(--color-active-bg); }
+
+.notes-cell  { color: var(--color-muted); font-size: 0.85rem; max-width: 200px; }
+.action-cell { white-space: nowrap; }
+
+/* ---- Progress bar --------------------------------------- */
+.progress-bar {
+  display: inline-block;
+  width: 80px;
+  height: 8px;
+  background: var(--color-border);
+  border-radius: 4px;
+  overflow: hidden;
+  vertical-align: middle;
+  margin-right: 0.4rem;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 4px;
+  min-width: 2px;
+}
+
+/* ---- Edit entry form ------------------------------------ */
+.entry-form .form-group {
+  margin-bottom: 1.1rem;
+}
+
+.entry-form label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+}
+
+/* ---- Misc ----------------------------------------------- */
+.muted  { color: var(--color-muted); }
+.total-time { margin-bottom: 0.75rem; font-size: 1rem; }
+
+/* ---- Footer --------------------------------------------- */
+.site-footer {
+  text-align: center;
+  padding: 1rem;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* ---- Responsive ----------------------------------------- */
+@media (max-width: 600px) {
+  .site-header { padding: 0.75rem 1rem; }
+  .container   { margin: 1rem auto; }
+  .card        { padding: 1rem; }
+  .entry-table { font-size: 0.8rem; }
+  .entry-table th, .entry-table td { padding: 0.4rem 0.5rem; }
+}

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Reports – Duty Clock{% endblock %}
+
+{% block content %}
+
+<!-- =====================================================================
+     Today's detailed entries
+     ===================================================================== -->
+<section class="card">
+  <h2>Today's time entries</h2>
+  {% if today_entries %}
+  <table class="entry-table">
+    <thead>
+      <tr>
+        <th>Duty</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Duration</th>
+        <th>Notes</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in today_entries %}
+      <tr {% if not e.ended_at %}class="row--active"{% endif %}>
+        <td>{{ e.duty_name }}</td>
+        <td>{{ e.started_at[11:16] }}</td>
+        <td>{{ e.ended_at[11:16] if e.ended_at else '▶ ongoing' }}</td>
+        <td>{{ format_duration(entry_duration_seconds(e)) }}</td>
+        <td class="notes-cell">{{ e.notes or '' }}</td>
+        <td class="action-cell">
+          <a href="{{ url_for('edit_entry', entry_id=e.id) }}" class="btn btn--small">Edit</a>
+          <form method="post" action="{{ url_for('delete_entry', entry_id=e.id) }}" style="display:inline"
+                onsubmit="return confirm('Delete this entry?');">
+            <button type="submit" class="btn btn--small btn--danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No entries today.</p>
+  {% endif %}
+</section>
+
+<!-- =====================================================================
+     Weekly summary (Mon → today)
+     ===================================================================== -->
+<section class="card">
+  <h2>Weekly summary <small class="muted">(since {{ week_start }})</small></h2>
+  {% if weekly_totals %}
+  <p>Total this week: <strong>{{ weekly_total_duration }}</strong></p>
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th>Duty</th>
+        <th>Time</th>
+        <th>Share</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in weekly_totals %}
+      <tr>
+        <td>{{ row.duty_name }}</td>
+        <td>{{ row.duration }}</td>
+        <td>
+          <div class="progress-bar">
+            <div class="progress-bar__fill" style="width: {{ row.percentage }}%"></div>
+          </div>
+          {{ row.percentage }}%
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No entries this week yet.</p>
+  {% endif %}
+</section>
+
+<!-- =====================================================================
+     Export
+     ===================================================================== -->
+<section class="card">
+  <h2>Export</h2>
+  <a href="{{ url_for('export_csv') }}" class="btn btn--primary">⬇ Download CSV</a>
+</section>
+
+{% endblock %}

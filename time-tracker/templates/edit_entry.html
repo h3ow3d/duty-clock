@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Edit Entry – Duty Clock{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h2>Edit time entry #{{ entry.id }}</h2>
+
+  <form method="post" class="entry-form">
+
+    <div class="form-group">
+      <label for="duty_id">Duty</label>
+      <select name="duty_id" id="duty_id" required class="select-input">
+        {% for d in duties %}
+        <option value="{{ d.id }}" {% if d.id == entry.duty_id %}selected{% endif %}>
+          {{ d.name }}{% if not d.active %} (inactive){% endif %}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="started_at">Start time</label>
+      <input type="datetime-local" name="started_at" id="started_at" required
+             value="{{ entry.started_at[:16] }}" class="text-input" />
+    </div>
+
+    <div class="form-group">
+      <label for="ended_at">End time <span class="muted">(leave blank if still running)</span></label>
+      <input type="datetime-local" name="ended_at" id="ended_at"
+             value="{{ entry.ended_at[:16] if entry.ended_at else '' }}" class="text-input" />
+    </div>
+
+    <div class="form-group">
+      <label for="notes">Notes</label>
+      <textarea name="notes" id="notes" rows="3" class="text-input textarea">{{ entry.notes or '' }}</textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn--primary">Save changes</button>
+      <a href="{{ url_for('report') }}" class="btn btn--muted">Cancel</a>
+    </div>
+
+  </form>
+</section>
+{% endblock %}
